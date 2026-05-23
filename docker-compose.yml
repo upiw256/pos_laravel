@@ -1,0 +1,50 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pos_app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - ./nginx/conf.d:/etc/nginx/conf.d # For overriding if needed, but App runs FPM
+    networks:
+      - pos_network
+    depends_on:
+      - db
+
+  web:
+    image: nginx:alpine
+    container_name: pos_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx/conf.d/app.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - pos_network
+    depends_on:
+      - app
+
+  db:
+    image: postgres:16-alpine
+    container_name: pos_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pos_db
+      POSTGRES_USER: pos_user
+      POSTGRES_PASSWORD: secret_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pos_db_data:/var/lib/postgresql/data
+    networks:
+      - pos_network
+
+networks:
+  pos_network:
+    driver: bridge
+
+volumes:
+  pos_db_data:

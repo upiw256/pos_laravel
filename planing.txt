@@ -1,0 +1,150 @@
+# DOKUMEN PERENCANAAN SISTEM POINT OF SALE (POS) KOMPLEKS
+# LEVEL: ADVANCE (ENTERPRISE / MULTI-OUTLET)
+
+Sistem POS ini dirancang untuk mencakup seluruh alur bisnis retail atau grosir secara komprehensif, mulai dari Manajemen Master Data, Pembelian, Stok Barang (Inventory), Penjualan (Kasir), hingga Akuntansi (Laporan Laba Rugi).
+
+==================================================
+1. FITUR & MODUL UTAMA
+==================================================
+
+A. Manajemen Pengguna & Hak Akses (RBAC)
+   - Role: Super Admin, Manajer Toko, Gudang (Inventory Manager), Kasir.
+   - Manajemen Multi-Outlet/Cabang (opsional jika dibutuhkan).
+
+B. Manajemen Master Data
+   - Kategori & Sub-Kategori Produk.
+   - Merk / Brand.
+   - Satuan Barang (UoM) - Mendukung multi-satuan (Misal: 1 Dus = 12 Pcs).
+   - Produk (Single Product, Variant Product seperti Warna/Ukuran, dan Combo).
+   - Supplier (Pemasok) & Customer otomatis tersimpan.
+
+C. Manajemen Pembelian (Procurement)
+   - Purchase Order (PO) ke Supplier.
+   - Penerimaan Barang (Receive Purchase / Good Receipt / GRN).
+   - Retur Pembelian (Purchase Return).
+
+D. Manajemen Stok Barang (Inventory Control) - *Sangat Krusial*
+   - Kartu Stok (Stock Ledger) riwayat pergerakan in/out barang secara akurat.
+   - Penyesuaian Stok (Stock Opname / Adjustment).
+   - Transfer Stok Antar Gudang/Cabang.
+   - Perhitungan HPP (Harga Pokok Penjualan) dengan metode FIFO atau Average (Penting untuk Laba Rugi).
+   - Pengingat Stok Minimum (Low Stock Alert).
+
+E. Manajemen Penjualan (POS Cashier)
+   - Antarmuka Kasir (cepat, responsif, full keyboard shortcut).
+   - Mendukung Barcode Scanner & Cetak Struk (Thermal Printer).
+   - Fitur Hold/Suspend (Menahan pesanan jika pelanggan pergi sebentar).
+   - Diskon Fleksibel (Diskon Per Item, Diskon Total, Voucher).
+   - Pajak (PPN).
+   - Multi Payment (Cash, Debit/Credit, QRIS/E-Wallet, Piutang/Hutang/Split Payment).
+   - Retur Penjualan (Sales Return).
+
+F. Manajemen Keuangan & Pengeluaran (Expenses)
+   - Pencatatan Biaya Operasional (Listrik, Air, Gaji Karyawan, Transport).
+   - Kategori Pengeluaran.
+
+G. Laporan (Reporting & Analytics) - *Mencapai Level Laba Rugi*
+   - Laporan Penjualan (Harian, Bulanan, Berdasarkan Produk/Kategori/Kasir).
+   - Laporan Pembelian & Hutang Supplier.
+   - Laporan Stok Akhir & Nilai Inventaris.
+   - Laporan Barang Terlaris (Best Seller).
+   - Laporan Pajak.
+   - LAPORAN LABA RUGI (PROFIT AND LOSS):
+     » Pendapatan Kotor (Total Sales)
+     » Harga Pokok Penjualan (HPP / Cost of Goods Sold)
+     » Laba Kotor (Gross Profit = Total Sales - HPP)
+     » Pengeluaran Operasional (Expenses)
+     » Laba Bersih (Net Profit = Laba Kotor - Expenses)
+
+==================================================
+2. DESAIN DATABASE (GAMBARAN ERD CORE)
+==================================================
+
+- users (id, name, email, password, role_id, outlet_id)
+- products (id, name, sku, barcode, category_id, brand_id, unit_id, is_variant, created_at)
+- product_variants (id, product_id, name, sku_variant, barcode, additional_price)
+- product_prices (id, product_id, variant_id, base_cost, sell_price, active_from)
+- inventory_stocks (id, product_id, variant_id, outlet_id, quantity, location)
+- stock_movements (id, product_id, variant_id, type(in/out/adj), qty, ref_type, ref_id)
+- purchases (id, reference_no, supplier_id, date, status, payment_status, total_amount)
+- purchase_items (id, purchase_id, product_id, cost, quantity, subtotal)
+- sales (id, reference_no, user_id, customer_id, total_price, tax, discount, grand_total, status, payment_method)
+- sale_items (id, sale_id, product_id, variant_id, unit_price, cost_price, quantity, subtotal)  *catatan: cost_price disimpan saat ini untuk hitung laba bersih*
+- expenses (id, category_id, amount, date, description, user_id)
+- customers (id, name, phone, email, address, total_points, debt_balance)
+- suppliers (id, name, contact_person, phone, address)
+
+==================================================
+3. STACK TEKNOLOGI
+==================================================
+- Backend Framework: Laravel 13 (Built with the latest PHP 8.4+ features).
+- TALL Stack disarankan untuk efisiensi: 
+  > Tailwind CSS (Styling)
+  > Alpine.js (Lightweight Frontend interaction)
+  > Laravel Livewire (Tampilan POS / Kasir tanpa reload)
+- Admin Panel (Backoffice): Laravel Filament v5 (Sangat cepat & modern untuk membangun dashboard kompleks, mendukung Livewire v4).
+  > URL: http://pos.test/admin
+  > Super Admin: admin@pos.test
+  > Pass: password (Ubah segera di produksi)
+- Database: PostgreSQL (Supabase Tokyo Pooler)
+  > Host: aws-1-ap-northeast-1.pooler.supabase.com
+  > Port: 5432
+  > User: postgres.rtwrfmkivkjlfrmdcjmn
+  > Pass: flcmPeZbQnd0ZLCK
+- Library Tambahan: DomPDF/Snappy (Cetak Laporan PDF), Excel (Maatwebsite), Print node/QZ Tray (opsional integrasi Hardware kasir).
+
+==================================================
+4. RENCANA IMPLEMENTASI ROADMAP (PHASE)
+==================================================
+
+PHASE 1: Foundation & Master Data (Minggu 1) ✅ SELESAI
+  [✅] Setup Laravel 13 + Koneksi Database Supabase.
+  [✅] Integrasi Filament v5 & Livewire v4.
+  [✅] Buat Super Admin user (admin@pos.test).
+  [✅] CRUD Kategori (Category).
+  [✅] CRUD Satuan Barang (Unit).
+  [✅] CRUD Merk (Brand).
+  [✅] CRUD Supplier.
+  [✅] CRUD Customer (dengan poin & hutang).
+  [✅] CRUD Produk (Simple & Varian).
+      - Form dinamis: toggle varian, auto-slug.
+      - Input harga HPP & Harga Jual per produk / per varian.
+      - Mendukung foto produk.
+  [✅] Database: tables products, product_variants, product_prices terbuat.
+
+PHASE 2: Inventory & Pembelian (Minggu 2) ✅ SELESAI
+  [✅] Database: tables inventory_stocks, stock_movements, purchases, purchase_items terbuat.
+  [✅] Modul Pembelian (PO, Items, Kalkulasi Otomatis & Stok In).
+  [✅] Modul Pergerakan Stok (View Stok & Input Mutasi).
+  [✅] Kartu Stok (History Mutasi Barang per Produk).
+  [✅] Sistem Penentuan HPP (Moving Average terimplementasi otomatis).
+
+PHASE 3: Transaksi & Kasir POS (Minggu 3) ✅ SELESAI
+  [✅] Pembuatan halaman Frontend khusus Kasir (Livewire Point of Sale).
+  [✅] Fitur Add to Cart, Edit Qty, Discount.
+  [✅] Fitur Payment & Checkout (Cash, Transfer, QRIS).
+  [✅] Pengurangan otomatis dari Inventory_Stocks secara Realtime.
+  [✅] Riwayat Transaksi (Sale History) di Admin Panel.
+
+PHASE 4: Keuangan & Pengeluaran (Minggu 4 - Awal) ✅ SELESAI
+  [✅] Modul Pencatatan Biaya (Expenses).
+  [✅] Laporan Penjualan (Tersedia via Dashboard & SaleResource).
+  [✅] Laporan Stok (Dashboard Widget Low Stock & Inventory Value).
+
+PHASE 5: Reporting Laba Rugi & Optimasi (Minggu 4 - Akhir) ✅ SELESAI
+  [✅] Pembuatan Dashboard Analytics (Stats overview Real-time).
+  [✅] Laporan Laba Rugi Komprehensif (Sesuai parameter tanggal).
+  [✅] Integrasi Full (Stok -> Pembelian -> Penjualan -> Akuntansi Laba Rugi).
+
+PHASE 6: Pengelolaan Multi Role & Autentikasi (Minggu 5) ✅ SELESAI
+  [✅] Implementasi Role-Based Access Control (RBAC).
+  [✅] Pembuatan middleware/gates untuk membatasi akses (Super Admin, Kasir, Inventory Manager).
+  [✅] Penyesuaian menu Filament berdasarkan Role.
+  [✅] Modul Manajemen Pengguna (User Management) untuk Admin.
+
+PHASE 7: Migrasi Deployment Lokal ke Docker (Minggu 6)
+  [ ] Pembuatan Dockerfile berbasis PHP 8.3/8.4 FPM.
+  [ ] Konfigurasi docker-compose.yml (App, Nginx Web Server, PostgreSQL Lokal).
+  [ ] Penyesuaian Nginx Server Block (app.conf).
+  [ ] Modifikasi variabel environment (.env) untuk menggunakan db lokal.
+  [ ] Re-Seeding data dummy ke dalam PostgreSQL Docker.
