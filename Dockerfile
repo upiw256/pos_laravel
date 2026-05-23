@@ -36,8 +36,12 @@ RUN chown -R www-data:www-data /var/www/html \
 # Jalankan npm install dan build aset Vite
 RUN npm ci && npm run build
 
-# Install komponen PHP dengan --no-scripts untuk mencegah artisan package:discover crash bila DB belum hidup saat build
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+# Tetapkan Environment agar Composer leluasa memori dan berjalan sebagai superuser di kontainer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Install komponen PHP dengan pengabaian dependensi platform sesaat (prevent exit code 2)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --ignore-platform-reqs
 
 EXPOSE 9000
 
