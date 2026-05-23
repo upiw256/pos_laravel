@@ -15,11 +15,12 @@ RUN apk --no-cache add \
     unzip \
     libpq-dev \
     postgresql-dev \
+    libzip-dev \
     nodejs \
     npm
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd intl
+RUN docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd intl zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -35,8 +36,8 @@ RUN chown -R www-data:www-data /var/www/html \
 # Jalankan npm install dan build aset Vite
 RUN npm ci && npm run build
 
-# Install komponen PHP (bisa disesuaikan jika ingin environment production murni)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install komponen PHP dengan --no-scripts untuk mencegah artisan package:discover crash bila DB belum hidup saat build
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 EXPOSE 9000
 
