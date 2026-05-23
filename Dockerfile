@@ -1,5 +1,5 @@
-# Dockerfile untuk Laravel 13 (PHP 8.3/8.4 + Filament)
-FROM php:8.3-fpm-alpine
+# Dockerfile untuk Laravel 13 (PHP 8.4 + Filament)
+FROM php:8.4-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www/html
