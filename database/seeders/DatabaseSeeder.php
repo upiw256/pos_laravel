@@ -15,11 +15,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Ensure Roles exist
+        $roles = ['super-admin', 'manager', 'inventory-manager', 'cashier'];
+        foreach ($roles as $roleSlug) {
+            \App\Models\Role::firstOrCreate(['slug' => $roleSlug], [
+                'name' => str_replace('-', ' ', ucwords($roleSlug, '-'))
+            ]);
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Generate Super Admin User
+        $adminRole = \App\Models\Role::where('slug', 'super-admin')->first();
+        \App\Models\User::firstOrCreate(['email' => 'admin@pos.test'], [
+            'name' => 'Super Admin',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role_id' => $adminRole->id
+        ]);
+        
+        $this->call([
+            DummyDataSeeder::class
         ]);
     }
 }
