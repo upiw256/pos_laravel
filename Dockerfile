@@ -27,7 +27,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Salin semua file dari host ke container
 COPY . /var/www/html/
-
+RUN npm ci && npm run build
 # Atur perizinan (permissions) agar Nginx/PHP-FPM bisa menulis ke folder storage
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
