@@ -5,9 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: pos_app
     restart: unless-stopped
+    working_dir: /var/www/html
     volumes:
       - .:/var/www/html
-      - ./nginx/conf.d:/etc/nginx/conf.d # For overriding if needed, but App runs FPM
+    entrypoint: ["/bin/sh", "-c", "[ ! -f .env ] && cp .env.example .env; composer install --optimize-autoloader --no-interaction 2>/dev/null; php-fpm"]
     networks:
       - pos_network
     depends_on:
