@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Sales\Tables;
 
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Filters\SelectFilter;
 
 class SalesTable
