@@ -72,153 +72,136 @@
             </div>
 
             <!-- ── Product List Table ── -->
-            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col" style="max-height: 72vh;">
+            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col" style="max-height: 73vh;">
 
-                <!-- Table Header -->
-                <div class="grid grid-cols-12 gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-0 z-10">
-                    <div class="col-span-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Produk</div>
-                    <div class="col-span-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">SKU</div>
-                    <div class="col-span-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-center">Stok</div>
-                    <div class="col-span-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-right">Harga</div>
-                    <div class="col-span-1"></div>
-                </div>
+                <!-- Table: proper HTML table for compact rows -->
+                <table class="w-full text-sm">
+                    <thead class="sticky top-0 z-10">
+                        <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                            <th class="px-3 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest w-1/2">Produk</th>
+                            <th class="px-2 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Kategori</th>
+                            <th class="px-2 py-2 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Stok</th>
+                            <th class="px-3 py-2 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Harga</th>
+                            <th class="w-8"></th>
+                        </tr>
+                    </thead>
+                </table>
 
                 <!-- Table Body -->
                 <div class="overflow-y-auto custom-scrollbar flex-1">
+                <table class="w-full text-sm">
+                <tbody>
                     @forelse($this->products as $product)
 
-                        {{-- ══ Non-variant product: single row ══ --}}
+                        {{-- ══ Non-variant product: single slim row ══ --}}
                         @if(!$product->is_variant)
                         @php
                             $stock = $product->stocks->whereNull('variant_id')->first();
                             $stockQty = $stock?->quantity ?? 0;
                             $lowStock = $stock && $stockQty <= ($stock->min_stock ?? 5);
                         @endphp
-                        <div
+                        <tr
                             wire:click="addToCart({{ $product->id }})"
-                            class="grid grid-cols-12 gap-2 px-4 py-3 border-b border-gray-50 dark:border-gray-800 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 cursor-pointer transition-colors group items-center"
+                            class="border-b border-gray-100 dark:border-gray-800 hover:bg-primary-50 dark:hover:bg-primary-900/10 cursor-pointer transition-colors group"
                         >
-                            <div class="col-span-5 flex items-center gap-3 min-w-0">
-                                {{-- Tiny thumbnail or icon --}}
-                                <div class="w-9 h-9 rounded-lg flex-shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                    @if($product->image)
-                                        <img src="{{ asset('storage/'.$product->image) }}" class="w-full h-full object-cover">
-                                    @else
-                                        <x-heroicon-o-cube class="h-4 w-4 text-gray-300 dark:text-gray-600" style="width:1rem;height:1rem;" />
-                                    @endif
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-gray-800 dark:text-gray-100 truncate leading-tight group-hover:text-primary-600 transition-colors">{{ $product->name }}</p>
-                                    <p class="text-[10px] text-primary-500 font-bold uppercase tracking-wide truncate">{{ $product->category->name ?? '—' }}</p>
-                                </div>
-                            </div>
-                            <div class="col-span-2 min-w-0">
-                                <span class="text-xs text-gray-500 dark:text-gray-400 font-mono truncate block">{{ $product->sku ?? '—' }}</span>
-                            </div>
-                            <div class="col-span-2 text-center">
+                            <td class="px-3 py-1.5 max-w-0 w-1/2">
+                                <span class="text-xs font-semibold text-gray-800 dark:text-gray-100 truncate block group-hover:text-primary-600 transition-colors">{{ $product->name }}</span>
+                                <span class="text-[10px] font-mono text-gray-400">{{ $product->sku ?? '' }}</span>
+                            </td>
+                            <td class="px-2 py-1.5">
+                                <span class="text-[10px] font-bold text-primary-500 uppercase tracking-wide whitespace-nowrap">{{ $product->category->name ?? '—' }}</span>
+                            </td>
+                            <td class="px-2 py-1.5 text-center">
                                 @if($stockQty <= 0)
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">Habis</span>
+                                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">Habis</span>
                                 @elseif($lowStock)
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">{{ $stockQty }}</span>
+                                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">{{ $stockQty }}</span>
                                 @else
-                                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ $stockQty }}</span>
+                                    <span class="text-xs font-bold text-gray-600 dark:text-gray-300">{{ $stockQty }}</span>
                                 @endif
-                            </div>
-                            <div class="col-span-2 text-right">
-                                <span class="text-sm font-black text-gray-900 dark:text-white whitespace-nowrap">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="col-span-1 flex justify-end">
-                                <div class="w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <x-heroicon-o-plus class="h-4 w-4" style="width:1rem;height:1rem;" />
+                            </td>
+                            <td class="px-3 py-1.5 text-right whitespace-nowrap">
+                                <span class="text-xs font-black text-gray-900 dark:text-white">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</span>
+                            </td>
+                            <td class="px-2 py-1.5 text-center">
+                                <div class="w-6 h-6 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity mx-auto">
+                                    <x-heroicon-o-plus class="h-3 w-3" style="width:0.75rem;height:0.75rem;" />
                                 </div>
-                            </div>
-                        </div>
+                            </td>
+                        </tr>
 
-                        {{-- ══ Variant product: expandable rows ══ --}}
+                        {{-- ══ Variant product ══ --}}
                         @else
-                        <div class="border-b border-gray-50 dark:border-gray-800">
-                            {{-- Parent row (header) --}}
-                            <div class="grid grid-cols-12 gap-2 px-4 py-2.5 bg-gray-50/70 dark:bg-gray-800/50 items-center">
-                                <div class="col-span-5 flex items-center gap-3 min-w-0">
-                                    <div class="w-9 h-9 rounded-lg flex-shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                        @if($product->image)
-                                            <img src="{{ asset('storage/'.$product->image) }}" class="w-full h-full object-cover">
-                                        @else
-                                            <x-heroicon-o-squares-2x2 class="h-4 w-4 text-gray-300 dark:text-gray-600" style="width:1rem;height:1rem;" />
-                                        @endif
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-bold text-gray-800 dark:text-gray-100 truncate leading-tight">{{ $product->name }}</p>
-                                        <p class="text-[10px] text-primary-500 font-bold uppercase tracking-wide">{{ $product->category->name ?? '—' }}</p>
-                                    </div>
-                                </div>
-                                <div class="col-span-2">
-                                    <span class="text-xs text-gray-400 font-mono">{{ $product->sku ?? '—' }}</span>
-                                </div>
-                                <div class="col-span-2 text-center">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">Varian</span>
-                                </div>
-                                <div class="col-span-2 text-right">
-                                    <span class="text-xs text-gray-400">{{ number_format($product->sell_price, 0, ',', '.') }}+</span>
-                                </div>
-                                <div class="col-span-1"></div>
-                            </div>
+                        {{-- Parent header row --}}
+                        <tr class="bg-gray-50/80 dark:bg-gray-800/60 border-b border-gray-100 dark:border-gray-800">
+                            <td class="px-3 py-1.5 max-w-0 w-1/2" colspan="2">
+                                <span class="text-xs font-bold text-gray-700 dark:text-gray-200 truncate block">{{ $product->name }}</span>
+                            </td>
+                            <td class="px-2 py-1.5 text-center">
+                                <span class="text-[10px] font-bold text-gray-400 px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded">Varian</span>
+                            </td>
+                            <td class="px-3 py-1.5 text-right">
+                                <span class="text-[10px] text-gray-400">{{ $product->category->name ?? '—' }}</span>
+                            </td>
+                            <td></td>
+                        </tr>
 
-                            {{-- Variant sub-rows --}}
-                            @foreach($product->variants as $variant)
-                            @php
-                                $varStock = $product->stocks->where('variant_id', $variant->id)->first();
-                                $varQty   = $varStock?->quantity ?? 0;
-                                $varLow   = $varStock && $varQty <= ($varStock->min_stock ?? 5);
-                            @endphp
-                            <div
-                                wire:click.stop="addToCart({{ $product->id }}, {{ $variant->id }})"
-                                class="grid grid-cols-12 gap-2 pl-16 pr-4 py-2.5 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 cursor-pointer transition-colors group items-center border-t border-gray-50 dark:border-gray-800/60"
-                            >
-                                <div class="col-span-5 flex items-center gap-2 min-w-0">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-primary-400 flex-shrink-0"></div>
-                                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate group-hover:text-primary-600 transition-colors">{{ $variant->name }}</p>
+                        {{-- Variant sub-rows --}}
+                        @foreach($product->variants as $variant)
+                        @php
+                            $varStock = $product->stocks->where('variant_id', $variant->id)->first();
+                            $varQty   = $varStock?->quantity ?? 0;
+                            $varLow   = $varStock && $varQty <= ($varStock->min_stock ?? 5);
+                        @endphp
+                        <tr
+                            wire:click.stop="addToCart({{ $product->id }}, {{ $variant->id }})"
+                            class="border-b border-gray-50 dark:border-gray-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/10 cursor-pointer transition-colors group"
+                        >
+                            <td class="pl-8 pr-2 py-1.5 max-w-0 w-1/2">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-1 h-1 rounded-full bg-primary-400 flex-shrink-0 inline-block"></span>
+                                    <span class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-primary-600 transition-colors">{{ $variant->name }}</span>
+                                </span>
+                                <span class="text-[10px] font-mono text-gray-400 pl-2.5">{{ $variant->sku ?? '' }}</span>
+                            </td>
+                            <td class="px-2 py-1.5"></td>
+                            <td class="px-2 py-1.5 text-center">
+                                @if($varQty <= 0)
+                                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">Habis</span>
+                                @elseif($varLow)
+                                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">{{ $varQty }}</span>
+                                @else
+                                    <span class="text-xs font-bold text-gray-600 dark:text-gray-300">{{ $varQty }}</span>
+                                @endif
+                            </td>
+                            <td class="px-3 py-1.5 text-right whitespace-nowrap">
+                                <span class="text-xs font-black text-gray-900 dark:text-white">Rp {{ number_format($variant->sell_price, 0, ',', '.') }}</span>
+                            </td>
+                            <td class="px-2 py-1.5 text-center">
+                                <div class="w-6 h-6 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity mx-auto">
+                                    <x-heroicon-o-plus class="h-3 w-3" style="width:0.75rem;height:0.75rem;" />
                                 </div>
-                                <div class="col-span-2">
-                                    <span class="text-[11px] text-gray-400 font-mono truncate block">{{ $variant->sku ?? '—' }}</span>
-                                </div>
-                                <div class="col-span-2 text-center">
-                                    @if($varQty <= 0)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">Habis</span>
-                                    @elseif($varLow)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">{{ $varQty }}</span>
-                                    @else
-                                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ $varQty }}</span>
-                                    @endif
-                                </div>
-                                <div class="col-span-2 text-right">
-                                    <span class="text-sm font-black text-gray-900 dark:text-white whitespace-nowrap">Rp {{ number_format($variant->sell_price, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="col-span-1 flex justify-end">
-                                    <div class="w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <x-heroicon-o-plus class="h-4 w-4" style="width:1rem;height:1rem;" />
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
+                            </td>
+                        </tr>
+                        @endforeach
                         @endif
 
                     @empty
-                        <div class="py-24 text-center">
-                            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <x-heroicon-o-magnifying-glass class="h-8 w-8 text-gray-300 dark:text-gray-600" />
-                            </div>
-                            <h3 class="text-base font-bold text-gray-400">Produk tidak ditemukan</h3>
-                            <p class="text-gray-400 mt-1 text-xs max-w-xs mx-auto">Coba kata kunci lain atau pilih kategori berbeda</p>
-                        </div>
+                        <tr>
+                            <td colspan="5" class="py-20 text-center">
+                                <div class="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                    <x-heroicon-o-magnifying-glass class="h-7 w-7 text-gray-300 dark:text-gray-600" />
+                                </div>
+                                <p class="text-sm font-bold text-gray-400">Produk tidak ditemukan</p>
+                                <p class="text-xs text-gray-400 mt-1">Coba kata kunci lain atau pilih kategori berbeda</p>
+                            </td>
+                        </tr>
                     @endforelse
-                </div>
-                <!-- /Table Body -->
-            </div>
-            <!-- /Product List Table -->
-        </div>
-        <!-- /Left Section -->
+                </tbody>
+                </table>
+                </div><!-- /scroll wrapper -->
+            </div><!-- /Product List Table -->
+        </div><!-- /Left Section -->
 
         <!-- ══════════════════════════════════════════════ -->
         <!-- Right: Cart & Summary (unchanged premium UI)   -->
