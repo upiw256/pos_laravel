@@ -81,11 +81,32 @@ class PosPage extends Page
 
     public function getProductsProperty()
     {
-        return Product::with(['variants', 'category'])
-            ->when($this->search, fn($q) => $q->where('name', 'ilike', "%{$this->search}%")->orWhere('sku', 'ilike', "%{$this->search}%"))
+        $search = trim($this->search);
+
+        return Product::with(['variants', 'category', 'stocks'])
             ->when($this->selectedCategory, fn($q) => $q->where('category_id', $this->selectedCategory))
             ->where('status', 'active')
-            ->limit(20)
+            ->when($search, function ($q) use ($search) {
+                // 1. Priority: exact barcode or SKU match (uses B-Tree index → O(log N))
+                $q->where(function ($inner) use ($search) {
+                    $inner->where('barcode', $search)
+                        ->orWhere('sku',     $search)
+                        // 2. Fallback: PostgreSQL full-text search via GIN index
+                        ->orWhereRaw(
+                            "to_tsvector('simple', coalesce(name,'') || ' ' || coalesce(sku,'') || ' ' || coalesce(barcode,'')) @@ plainto_tsquery('simple', ?)",
+                            [$search]
+                        )
+                        // 3. Last resort: substring ILIKE for partial prefix (e.g. typing "samp" → "Sampo")
+                        ->orWhere('name', 'ilike', "%{$search}%");
+                });
+            })
+            ->orderByRaw(
+                $search
+                    ? "CASE WHEN barcode = ? OR sku = ? THEN 0 ELSE 1 END, name"
+                    : "name",
+                $search ? [$search, $search] : []
+            )
+            ->limit(60)
             ->get();
     }
 
