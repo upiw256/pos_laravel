@@ -41,7 +41,10 @@
             <!-- Product Grid -->
             <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 overflow-y-auto max-h-[70vh] pr-2 custom-scrollbar pb-10">
                 @forelse($this->products as $product)
-                    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col group transition-all hover:shadow-xl hover:shadow-primary-500/5 hover:-translate-y-1">
+                    <div 
+                        class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col group transition-all hover:shadow-xl hover:shadow-primary-500/5 hover:-translate-y-1 {{ !$product->is_variant ? 'cursor-pointer' : '' }}"
+                        @if(!$product->is_variant) wire:click="addToCart({{ $product->id }})" @endif
+                    >
                         <div class="relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-800">
                             @if($product->image)
                                 <img src="{{ asset('storage/' . $product->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
@@ -51,17 +54,14 @@
                                 </div>
                             @endif
                             
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                                @if(!$product->is_variant)
-                                    <button 
-                                        wire:click="addToCart({{ $product->id }})"
-                                        class="w-full bg-white text-primary-600 font-bold py-2 rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
-                                    >
+                            @if(!$product->is_variant)
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3 pointer-events-none">
+                                    <span class="w-full bg-white text-primary-600 font-bold py-2 rounded-xl flex items-center justify-center gap-2 shadow-lg">
                                         <x-heroicon-o-plus-circle class="h-5 w-5" style="width:1.25rem;height:1.25rem;" />
                                         TAMBAH
-                                    </button>
-                                @endif
-                            </div>
+                                    </span>
+                                </div>
+                            @endif
                         </div>
                         
                         <div class="p-4 flex-grow flex flex-col">
@@ -69,16 +69,22 @@
                             <h2 class="text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2 leading-tight flex-grow">{{ $product->name }}</h2>
                             <div class="mt-3 flex items-center justify-between">
                                 <span class="text-lg font-black text-gray-900 dark:text-white">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</span>
+                                @if(!$product->is_variant)
+                                    <span class="text-[10px] font-bold text-primary-500 bg-primary-50 dark:bg-primary-900/30 px-2 py-1 rounded-full flex items-center gap-1">
+                                        <x-heroicon-o-plus class="h-3 w-3" style="width:0.75rem;height:0.75rem;" /> Tambah
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
                         @if($product->is_variant)
                             <div class="px-4 py-3 bg-gray-50/50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Pilih Varian:</p>
                                 <div class="grid grid-cols-2 gap-2">
                                     @foreach($product->variants as $variant)
                                         <button 
-                                            wire:click="addToCart({{ $product->id }}, {{ $variant->id }})"
-                                            class="text-[10px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-2 hover:border-primary-500 hover:text-primary-600 font-bold transition-all truncate"
+                                            wire:click.stop="addToCart({{ $product->id }}, {{ $variant->id }})"
+                                            class="text-[10px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-2 hover:border-primary-500 hover:bg-primary-50 hover:text-primary-600 font-bold transition-all truncate active:scale-95"
                                             title="{{ $variant->name }}"
                                         >
                                             {{ $variant->name }}
