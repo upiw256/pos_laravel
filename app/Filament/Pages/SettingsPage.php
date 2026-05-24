@@ -21,7 +21,7 @@ class SettingsPage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Pengaturan Toko';
     protected static ?string $title = 'Konfigurasi Toko';
     protected static ?int $navigationSort = 10;
-    protected static string $view = 'filament.pages.settings-page';
+    protected string $view = 'filament.pages.settings-page';
 
     public static function canAccess(): bool
     {
