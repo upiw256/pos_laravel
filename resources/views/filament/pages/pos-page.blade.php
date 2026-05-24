@@ -3,7 +3,19 @@
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-full min-h-[85vh] -mt-4">
         
         <!-- Left Section: Product Browser -->
-        <div class="md:col-span-8 flex flex-col gap-6">
+        <div class="md:col-span-8 flex flex-col gap-6 relative">
+            <!-- Checkout Mode Overlay -->
+            @if($is_checkout_mode)
+            <div class="absolute inset-0 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm z-20 rounded-3xl flex flex-col items-center justify-center border border-white/20 dark:border-gray-800/50">
+                <x-heroicon-o-lock-closed class="w-16 h-16 text-primary-500/80 mb-4" />
+                <h3 class="text-2xl font-black text-gray-800 dark:text-gray-100">Mode Pembayaran Aktif</h3>
+                <p class="text-gray-500 mt-2 font-medium">Selesaikan atau batalkan pembayaran di jendela sebelah kanan.</p>
+                <button wire:click="cancelCheckout" class="mt-6 px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-500 hover:text-red-500 text-gray-600 dark:text-gray-400 rounded-xl font-bold transition-all shadow-sm">
+                    Batalkan & Kembali Belanja
+                </button>
+            </div>
+            @endif
+
             <!-- Search & Categories (Glassmorphic) -->
             <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-md sticky top-0 z-10 rounded-2xl shadow-sm p-5 border border-white/20 dark:border-gray-800/50">
                 <div class="flex flex-col lg:flex-row gap-5 justify-between items-center">
@@ -214,19 +226,135 @@
                         @endforeach
                     </div>
 
-                    <button 
-                        wire:click="checkout"
-                        @disabled(empty($cart))
-                        class="w-full relative group overflow-hidden bg-primary-600 hover:bg-primary-700 active:scale-[0.98] disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:shadow-none text-white font-black py-5 rounded-2xl shadow-xl shadow-primary-500/40 transition-all flex items-center justify-center gap-4"
-                    >
-                        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                        <x-heroicon-o-check-circle class="h-7 w-7" style="width:1.75rem;height:1.75rem;" />
-                        <span class="text-sm tracking-[0.1em]">SELESAIKAN TRANSAKSI</span>
-                    </button>
+                    <!-- Payment Details Form -->
+                    @if($is_checkout_mode)
+                        <div class="bg-gray-100 dark:bg-gray-900 rounded-xl p-4 mt-2 animate-item">
+                            @if($payment_method === 'cash')
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block">Uang Diterima (Rp)</label>
+                                    <div class="grid grid-cols-3 gap-2 mb-3">
+                                        <button wire:click="setCashPreset({{ $this->grand_total }})" class="py-1.5 px-2 bg-white dark:bg-gray-800 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-700 hover:border-primary-500 hover:text-primary-600 transition-colors">Uang Pas</button>
+                                        <button wire:click="setCashPreset(50000)" class="py-1.5 px-2 bg-white dark:bg-gray-800 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-700 hover:border-primary-500 hover:text-primary-600 transition-colors">50.000</button>
+                                        <button wire:click="setCashPreset(100000)" class="py-1.5 px-2 bg-white dark:bg-gray-800 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-700 hover:border-primary-500 hover:text-primary-600 transition-colors">100.000</button>
+                                    </div>
+                                    <input type="number" wire:model.live="cash_tendered" class="w-full text-right bg-white dark:bg-gray-800 border-none rounded-xl font-black text-lg focus:ring-2 focus:ring-primary-500">
+                                    
+                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <span class="text-xs font-bold text-gray-500">Kembalian</span>
+                                        <span class="text-base font-black {{ $this->change_amount > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white' }}">
+                                            Rp {{ number_format($this->change_amount, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @elseif($payment_method === 'transfer')
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block">Pilih Bank</label>
+                                    <select wire:model="payment_detail" class="w-full bg-white dark:bg-gray-800 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary-500 shadow-sm border border-gray-100 dark:border-gray-800">
+                                        <option value="">-- Pilih Bank --</option>
+                                        @foreach($bankOptions as $key => $bank)
+                                            <option value="{{ $key }}">{{ $bank }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif($payment_method === 'qris')
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block">Layanan E-Wallet/QRIS</label>
+                                    <select wire:model="payment_detail" class="w-full bg-white dark:bg-gray-800 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary-500 shadow-sm border border-gray-100 dark:border-gray-800">
+                                        <option value="">-- Pilih Layanan --</option>
+                                        @foreach($qrisOptions as $key => $qris)
+                                            <option value="{{ $key }}">{{ $qris }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if(!$is_checkout_mode)
+                        <button 
+                            wire:click="startCheckout"
+                            @disabled(empty($cart))
+                            class="w-full relative group overflow-hidden bg-primary-600 hover:bg-primary-700 active:scale-[0.98] disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:shadow-none text-white font-black py-5 rounded-2xl shadow-xl shadow-primary-500/40 transition-all flex items-center justify-center gap-4 mt-2"
+                        >
+                            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <x-heroicon-o-arrow-right-circle class="h-7 w-7" style="width:1.75rem;height:1.75rem;" />
+                            <span class="text-sm tracking-[0.1em]">LANJUT PEMBAYARAN</span>
+                        </button>
+                    @else
+                        <div class="flex gap-2 mt-2">
+                            <button 
+                                wire:click="cancelCheckout"
+                                class="w-1/3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold py-5 rounded-2xl transition-all"
+                            >
+                                Batal
+                            </button>
+                            <button 
+                                wire:click="submitCheckout"
+                                @disabled($payment_method === 'cash' && !$this->is_cash_valid)
+                                class="w-2/3 relative group overflow-hidden bg-green-600 hover:bg-green-700 active:scale-[0.98] disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:shadow-none text-white font-black py-5 rounded-2xl shadow-xl shadow-green-500/40 transition-all flex items-center justify-center gap-3"
+                            >
+                                <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                <x-heroicon-o-check-badge class="h-6 w-6" style="width:1.5rem;height:1.5rem;" />
+                                <span class="text-sm tracking-[0.1em]">PROSES SEKARANG</span>
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Receipt -->
+    @if($showReceiptModal && $lastSale)
+    <div class="fixed inset-0 z-[100] flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" wire:click="closeReceipt"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl p-6 m-4 animate-item z-10 border border-white/10 dark:border-gray-800">
+            
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <x-heroicon-o-check-circle class="h-10 w-10 text-green-500" />
+                </div>
+                <h3 class="text-xl font-black text-gray-900 dark:text-white">Transaksi Berhasil!</h3>
+                <p class="text-sm text-gray-500 mt-1 font-bold">{{ $lastSale['reference_no'] }}</p>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-4 mb-6 space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-xs text-gray-500 font-medium tracking-widest uppercase">Metode</span>
+                    <span class="text-xs font-bold uppercase text-gray-900 dark:text-gray-100">{{ $lastSale['payment_method'] }} {{ $lastSale['payment_detail'] ? '- '.$lastSale['payment_detail'] : '' }}</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-y border-dashed border-gray-200 dark:border-gray-700">
+                    <span class="text-xs text-gray-500 font-medium tracking-widest uppercase">Total</span>
+                    <span class="text-xl font-black shrink-0 text-primary-600">Rp {{ number_format($lastSale['grand_total'], 0, ',', '.') }}</span>
+                </div>
+                @if($lastSale['payment_method'] === 'cash')
+                <div class="flex justify-between pt-1">
+                    <span class="text-xs text-gray-500 font-medium">Tunai</span>
+                    <span class="text-sm font-black text-gray-900 dark:text-gray-200">Rp {{ number_format($lastSale['cash_tendered'], 0, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-xs text-gray-500 font-medium">Kembali</span>
+                    <span class="text-sm font-black text-green-600">Rp {{ number_format($lastSale['change_amount'], 0, ',', '.') }}</span>
+                </div>
+                @endif
+            </div>
+
+            <div class="flex gap-3">
+                <button wire:click="closeReceipt" class="flex-1 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-all">
+                    Tutup
+                </button>
+                <a href="{{ route('pos.receipt', $lastSale['id']) }}" target="_blank" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                    <x-heroicon-o-printer class="w-5 h-5" />
+                    Cetak Struk
+                </a>
+            </div>
+            
+        </div>
+    </div>
+    @endif
 
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }

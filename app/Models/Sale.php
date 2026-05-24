@@ -10,6 +10,7 @@ class Sale extends Model
         'reference_no', 'user_id', 'customer_id',
         'total_price', 'tax_amount', 'discount_amount',
         'grand_total', 'status', 'payment_method', 'notes',
+        'cash_tendered', 'change_amount', 'payment_detail',
     ];
 
     protected $casts = [
@@ -17,6 +18,8 @@ class Sale extends Model
         'tax_amount'      => 'decimal:2',
         'discount_amount' => 'decimal:2',
         'grand_total'     => 'decimal:2',
+        'cash_tendered'   => 'decimal:2',
+        'change_amount'   => 'decimal:2',
     ];
 
     public function user()

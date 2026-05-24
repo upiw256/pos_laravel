@@ -148,3 +148,11 @@ PHASE 7: Migrasi Deployment Lokal ke Docker (Minggu 6)
   [ ] Penyesuaian Nginx Server Block (app.conf).
   [ ] Modifikasi variabel environment (.env) untuk menggunakan db lokal.
   [ ] Re-Seeding data dummy ke dalam PostgreSQL Docker.
+
+PHASE 8: Penyempurnaan Fitur Transaksi Kasir ✅ SELESAI
+  [✅] Menambahkan input uang yang dibayarkan dan kalkulasi kembalian otomatis pada pembayaran Tunai.
+  [✅] Menambahkan dropdown pilihan Bank spesifik pada pembayaran melalui Bank.
+  [✅] Menambahkan dropdown pilihan penyedia QRIS spesifik pada pembayaran melalui QRIS.
+  [✅] Menonaktifkan (disable) pilihan barang saat proses pembayaran berlangsung.
+  [✅] Menampilkan struk transaksi dalam bentuk PDF setelah transaksi selesai.
+  [✅] Menambahkan tombol print agar kasir dapat langsung mencetak struk PDF.
