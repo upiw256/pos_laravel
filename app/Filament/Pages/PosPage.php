@@ -12,9 +12,11 @@ use App\Models\StockMovement;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Livewire\WithPagination;
 
 class PosPage extends Page
 {
+    use WithPagination;
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-cart';
     protected string $view = 'filament.pages.pos-page';
     protected static ?string $title = 'Kasir POS';
@@ -37,6 +39,16 @@ class PosPage extends Page
     public $tax_rate = 11;
     public $payment_method = 'cash';
     public $notes = '';
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSelectedCategory()
+    {
+        $this->resetPage();
+    }
 
     // Cash payment
     public $cash_tendered = 0;
@@ -106,8 +118,7 @@ class PosPage extends Page
                     : "name",
                 $search ? [$search, $search] : []
             )
-            ->limit(60)
-            ->get();
+            ->paginate(20);
     }
 
     public function getCustomersProperty()

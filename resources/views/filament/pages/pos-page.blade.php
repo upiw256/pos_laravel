@@ -200,6 +200,13 @@
                 </tbody>
                 </table>
                 </div><!-- /scroll wrapper -->
+
+                {{-- Pagination --}}
+                @if($this->products->hasPages())
+                    <div class="px-4 py-2 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+                        {{ $this->products->links() }}
+                    </div>
+                @endif
             </div><!-- /Product List Table -->
         </div><!-- /Left Section -->
 
