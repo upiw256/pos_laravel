@@ -57,6 +57,15 @@ class ProductsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    \Filament\Tables\Actions\BulkAction::make('printTags')
+                        ->label('Cetak Label Harga')
+                        ->icon('heroicon-o-printer')
+                        ->color('success')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $ids = $records->pluck('id')->toArray();
+                            return redirect()->route('pos.print-tags', ['ids' => $ids]);
+                        })
+                        ->openUrlInNewTab(),
                 ]),
             ]);
     }

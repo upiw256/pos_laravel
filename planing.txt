@@ -168,3 +168,8 @@ PHASE 10: Kustomisasi UI Dashboard & Grafik (Theme Override & Analytics) ✅ SEL
   [✅] Injeksi CSS Custom untuk styling halaman login dan panel yang lebih unik.
   [✅] Membuat grafik riwayat penjualan mingguan (SalesChart) di Dashboard.
   [✅] Transisi routing otomatis web utama ke halaman login Administrator.
+
+PHASE 11: Fitur Cetak Label Harga & Barcode (Price Tags) ✅ SELESAI
+  [✅] Menambahkan Bulk Action di halaman Products (Cetak Label Harga).
+  [✅] Menyiapkan Halaman HTML cetak grid A4 responsif.
+  [✅] Integrasi JSBarcode untuk rendering barcode di setiap label.
