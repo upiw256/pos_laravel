@@ -113,7 +113,15 @@
                         >
                             <td class="px-3 py-1.5 max-w-0 w-1/2">
                                 <span class="text-xs font-semibold text-gray-800 dark:text-gray-100 truncate block group-hover:text-primary-600 transition-colors">{{ $product->name }}</span>
-                                <span class="text-[10px] font-mono text-gray-400">{{ $product->sku ?? '' }}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-mono text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-1 rounded">{{ $product->sku ?? '-' }}</span>
+                                    @if($product->barcode)
+                                        <span class="text-[10px] font-mono text-primary-500/70 flex items-center gap-0.5">
+                                            <x-heroicon-m-qr-code class="h-2.5 w-2.5" />
+                                            {{ $product->barcode }}
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-2 py-1.5">
                                 <span class="text-[10px] font-bold text-primary-500 uppercase tracking-wide whitespace-nowrap">{{ $product->category->name ?? '—' }}</span>
@@ -169,7 +177,15 @@
                                     <span class="w-1 h-1 rounded-full bg-primary-400 flex-shrink-0 inline-block"></span>
                                     <span class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-primary-600 transition-colors">{{ $variant->name }}</span>
                                 </span>
-                                <span class="text-[10px] font-mono text-gray-400 pl-2.5">{{ $variant->sku ?? '' }}</span>
+                                <span class="pl-2.5 flex items-center gap-1.5">
+                                    <span class="text-[10px] font-mono text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-1 rounded">{{ $variant->sku ?? '-' }}</span>
+                                    @if($variant->barcode)
+                                        <span class="text-[10px] font-mono text-primary-500/70 flex items-center gap-0.5">
+                                            <x-heroicon-m-qr-code class="h-2.5 w-2.5" />
+                                            {{ $variant->barcode }}
+                                        </span>
+                                    @endif
+                                </span>
                             </td>
                             <td class="px-2 py-1.5"></td>
                             <td class="px-2 py-1.5 text-center">
