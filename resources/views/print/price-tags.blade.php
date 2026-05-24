@@ -29,6 +29,17 @@
             flex-direction: column;
             justify-content: space-between;
             page-break-inside: avoid;
+            background: #ffffff;
+        }
+        .tag-box.discount {
+            background: #fefce8;
+            border: 2px dashed #eab308;
+        }
+        .tag-box.discount .store-name {
+            color: #92400e;
+        }
+        .tag-box.discount .product-name {
+            color: #78350f;
         }
         .store-name {
             font-size: 10px;
@@ -80,6 +91,12 @@
             .tag-box {
                 border: 1px dashed #000;
             }
+            .tag-box.discount {
+                background: #fefce8 !important;
+                border: 1.5px dashed #eab308 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
             /* Hide print button when printing */
             .no-print {
                 display: none !important;
@@ -103,7 +120,7 @@
                 // Jika produk tidak punya barcode sendiri, gunakan SKU. Jika tidak, "0000" fallback.
                 $barcodeVal = $product->barcode ?: ($product->sku ?: '0000000');
             @endphp
-            <div class="tag-box">
+            <div class="tag-box {{ ($product->discount_price && $product->discount_price > 0) ? 'discount' : '' }}">
                 <div class="store-name">{{ \App\Models\Setting::get('store_name', 'POS Store') }}</div>
                 <div class="product-name">{{ $product->name }}</div>
                 @if($product->discount_price && $product->discount_price > 0)
