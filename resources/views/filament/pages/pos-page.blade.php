@@ -61,12 +61,19 @@
                 <!-- Result count hint -->
                 <div class="mt-2 flex items-center justify-between px-1">
                     <span class="text-[11px] text-gray-400 font-medium">
-                        {{ $this->products->count() }} produk ditemukan
-                        @if($search) <span class="text-primary-500">untuk "<strong>{{ $search }}</strong>"</span> @endif
+                        @if(empty($search) && empty($selectedCategory))
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                Siap melayani... Silahkan scan atau cari produk.
+                            </span>
+                        @else
+                            {{ $this->products->total() }} produk ditemukan
+                            @if($search) <span class="text-primary-500">untuk "<strong>{{ $search }}</strong>"</span> @endif
+                        @endif
                     </span>
                     <span class="text-[11px] text-gray-400 font-medium hidden sm:block">
                         <x-heroicon-o-bolt class="inline h-3 w-3 text-yellow-500" style="width:0.75rem;height:0.75rem;" />
-                        Full-Text Index Search
+                        High-Performance Search
                     </span>
                 </div>
             </div>
@@ -188,12 +195,22 @@
 
                     @empty
                         <tr>
-                            <td colspan="5" class="py-20 text-center">
-                                <div class="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                                    <x-heroicon-o-magnifying-glass class="h-7 w-7 text-gray-300 dark:text-gray-600" />
-                                </div>
-                                <p class="text-sm font-bold text-gray-400">Produk tidak ditemukan</p>
-                                <p class="text-xs text-gray-400 mt-1">Coba kata kunci lain atau pilih kategori berbeda</p>
+                            <td colspan="5" class="py-24 text-center">
+                                @if(empty($search) && empty($selectedCategory))
+                                    <div class="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-3xl flex items-center justify-center mx-auto mb-6 scale-125 transition-transform">
+                                        <x-heroicon-o-magnifying-glass-circle class="h-10 w-10 text-primary-600" />
+                                    </div>
+                                    <h4 class="text-lg font-black text-gray-800 dark:text-gray-100 uppercase tracking-[0.2em] mb-2">Mulai Transaksi</h4>
+                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest bg-gray-100 dark:bg-gray-800 inline-block px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700">
+                                        Scan Barcode / Cari Produk
+                                    </p>
+                                @else
+                                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                                        <x-heroicon-o-exclamation-triangle class="h-8 w-8 text-gray-300 dark:text-gray-600" />
+                                    </div>
+                                    <h4 class="text-sm font-black text-gray-800 dark:text-gray-100 uppercase tracking-widest">Produk Tidak Ditemukan</h4>
+                                    <p class="text-[11px] text-gray-400 mt-1 font-medium">Cek kembali kata kunci atau kategori yang Anda pilih.</p>
+                                @endif
                             </td>
                         </tr>
                     @endforelse

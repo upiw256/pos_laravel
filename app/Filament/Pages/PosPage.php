@@ -95,6 +95,11 @@ class PosPage extends Page
     {
         $search = trim($this->search);
 
+        // if no search and no category selected, return empty paginator
+        if (empty($search) && empty($this->selectedCategory)) {
+            return Product::whereRaw('1 = 0')->paginate(20);
+        }
+
         return Product::with(['variants', 'category', 'stocks'])
             ->when($this->selectedCategory, fn($q) => $q->where('category_id', $this->selectedCategory))
             ->where('status', 'active')
@@ -120,6 +125,7 @@ class PosPage extends Page
             )
             ->paginate(20);
     }
+
 
     public function getCustomersProperty()
     {
