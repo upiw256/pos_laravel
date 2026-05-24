@@ -8,7 +8,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -39,13 +39,13 @@ class SettingsPage extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Informasi Toko (Ditampilkan di Struk PDF)')
                     ->description('Detail ini akan langsung muncul pada aplikasi POS dan cetak struk pdf.')
-                    ->schema([
+                    ->components([
                         TextInput::make('shop_name')
                             ->label('Nama Toko')
                             ->required()
