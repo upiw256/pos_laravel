@@ -20,125 +20,127 @@ class ProductForm
     {
         return $schema
             ->components([
-                Grid::make(3)
+                Grid::make(1)
                     ->schema([
-                        Group::make()
+                        Section::make('Informasi Produk')
+                            ->columns(2)
                             ->schema([
-                                Section::make('Informasi Produk')
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label('Nama Produk')
-                                            ->required()
-                                            ->live(onBlur: true)
-                                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                                        TextInput::make('slug')
-                                            ->required()
-                                            ->unique(ignoreRecord: true),
-                                        Textarea::make('description')
-                                            ->label('Deskripsi')
-                                            ->rows(5),
-                                    ]),
-                                Section::make('Identitas & Status')
-                                    ->schema([
-                                        Grid::make(2)
-                                            ->schema([
-                                                TextInput::make('sku')
-                                                    ->label('SKU')
-                                                    ->unique(ignoreRecord: true),
-                                                TextInput::make('barcode')
-                                                    ->label('Barcode')
-                                                    ->unique(ignoreRecord: true),
-                                            ]),
-                                        Select::make('status')
-                                            ->label('Status')
-                                            ->options([
-                                                'active' => 'Aktif',
-                                                'inactive' => 'Non-Aktif',
-                                            ])
-                                            ->default('active')
-                                            ->required(),
-                                    ]),
-                            ])->columnSpan(2),
-                        Group::make()
+                                TextInput::make('name')
+                                    ->label('Nama Produk')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->columnSpan(1),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->columnSpan(1),
+                                Textarea::make('description')
+                                    ->label('Deskripsi')
+                                    ->rows(3)
+                                    ->columnSpan(2),
+                            ]),
+                            
+                        Section::make('Identitas, Relasi & Satuan')
+                            ->columns(3)
                             ->schema([
-                                Section::make('Relasi & Satuan')
-                                    ->schema([
-                                        Select::make('category_id')
-                                            ->label('Kategori')
-                                            ->relationship('category', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->required(),
-                                        Select::make('brand_id')
-                                            ->label('Merk')
-                                            ->relationship('brand', 'name')
-                                            ->searchable()
-                                            ->preload(),
-                                        Select::make('unit_id')
-                                            ->label('Satuan')
-                                            ->relationship('unit', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->required(),
-                                    ]),
-                                Section::make('Media')
-                                    ->schema([
-                                        FileUpload::make('image')
-                                            ->label('Foto Produk')
-                                            ->image()
-                                            ->directory('products'),
-                                    ]),
-                                Section::make('Varian & Harga')
-                                    ->schema([
-                                        Toggle::make('is_variant')
-                                            ->label('Produk ini memiliki varian?')
-                                            ->live(),
-                                        
-                                        // Harga untuk Produk Tanpa Varian
-                                        Grid::make(2)
-                                            ->schema([
-                                                TextInput::make('cost_price')
-                                                    ->label('Harga Pokok (HPP)')
-                                                    ->numeric()
-                                                    ->prefix('Rp')
-                                                    ->required(fn ($get) => !$get('is_variant')),
-                                                TextInput::make('sell_price')
-                                                    ->label('Harga Jual')
-                                                    ->numeric()
-                                                    ->prefix('Rp')
-                                                    ->required(fn ($get) => !$get('is_variant')),
-                                            ])
-                                            ->visible(fn ($get) => !$get('is_variant')),
+                                TextInput::make('sku')
+                                    ->label('SKU')
+                                    ->unique(ignoreRecord: true),
+                                TextInput::make('barcode')
+                                    ->label('Barcode')
+                                    ->unique(ignoreRecord: true),
+                                Select::make('status')
+                                    ->label('Status')
+                                    ->options([
+                                        'active' => 'Aktif',
+                                        'inactive' => 'Non-Aktif',
+                                    ])
+                                    ->default('active')
+                                    ->required(),
+                                    
+                                Select::make('category_id')
+                                    ->label('Kategori')
+                                    ->relationship('category', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                                Select::make('brand_id')
+                                    ->label('Merk')
+                                    ->relationship('brand', 'name')
+                                    ->searchable()
+                                    ->preload(),
+                                Select::make('unit_id')
+                                    ->label('Satuan')
+                                    ->relationship('unit', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                            ]),
 
-                                        // Repeater untuk Produk Dengan Varian
-                                        \Filament\Forms\Components\Repeater::make('variants')
-                                            ->relationship()
+                        Section::make('Media')
+                            ->schema([
+                                FileUpload::make('image')
+                                    ->label('Foto Produk')
+                                    ->image()
+                                    ->directory('products'),
+                            ]),
+
+                        Section::make('Varian & Harga')
+                            ->schema([
+                                Toggle::make('is_variant')
+                                    ->label('Produk ini memiliki varian?')
+                                    ->live(),
+                                
+                                // Harga untuk Produk Tanpa Varian
+                                Grid::make(2)
+                                    ->schema([
+                                        TextInput::make('cost_price')
+                                            ->label('Harga Pokok (HPP)')
+                                            ->numeric()
+                                            ->prefix('Rp')
+                                            ->required(fn ($get) => !$get('is_variant')),
+                                        TextInput::make('sell_price')
+                                            ->label('Harga Jual')
+                                            ->numeric()
+                                            ->prefix('Rp')
+                                            ->required(fn ($get) => !$get('is_variant')),
+                                    ])
+                                    ->visible(fn ($get) => !$get('is_variant')),
+
+                                // Repeater untuk Produk Dengan Varian
+                                \Filament\Forms\Components\Repeater::make('variants')
+                                    ->relationship()
+                                    ->schema([
+                                        Grid::make(4)
                                             ->schema([
                                                 TextInput::make('name')
                                                     ->label('Nama Varian (Contoh: Merah, XL)')
-                                                    ->required(),
+                                                    ->required()
+                                                    ->columnSpan(1),
                                                 TextInput::make('sku')
-                                                    ->label('SKU Varian'),
-                                                Grid::make(2)
-                                                    ->schema([
-                                                        TextInput::make('cost_price')
-                                                            ->label('HPP Varian')
-                                                            ->numeric()
-                                                            ->prefix('Rp')
-                                                            ->required(),
-                                                        TextInput::make('sell_price')
-                                                            ->label('Harga Jual Varian')
-                                                            ->numeric()
-                                                            ->prefix('Rp')
-                                                            ->required(),
-                                                    ]),
-                                                TextInput::make('barcode'),
+                                                    ->label('SKU Varian')
+                                                    ->columnSpan(1),
+                                                TextInput::make('cost_price')
+                                                    ->label('HPP Varian')
+                                                    ->numeric()
+                                                    ->prefix('Rp')
+                                                    ->required()
+                                                    ->columnSpan(1),
+                                                TextInput::make('sell_price')
+                                                    ->label('Harga Jual Varian')
+                                                    ->numeric()
+                                                    ->prefix('Rp')
+                                                    ->required()
+                                                    ->columnSpan(1),
+                                                TextInput::make('barcode')
+                                                    ->columnSpan(4),
                                             ])
-                                            ->visible(fn ($get) => $get('is_variant'))
-                                            ->columns(1)
-                                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
-                                    ]),
-                            ])->columnSpan(1),
+                                    ])
+                                    ->visible(fn ($get) => $get('is_variant'))
+                                    ->columns(1)
+                                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            ]),
                     ]),
             ]);
     }
