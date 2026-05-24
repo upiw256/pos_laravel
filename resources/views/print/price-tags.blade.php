@@ -104,7 +104,7 @@
                 $barcodeVal = $product->barcode ?: ($product->sku ?: '0000000');
             @endphp
             <div class="tag-box">
-                <div class="store-name">{{ \App\Models\Setting::getVal('store_name', 'POS Store') }}</div>
+                <div class="store-name">{{ \App\Models\Setting::get('store_name', 'POS Store') }}</div>
                 <div class="product-name">{{ $product->name }}</div>
                 <div class="price">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</div>
                 
