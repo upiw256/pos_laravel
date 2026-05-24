@@ -57,7 +57,7 @@ class ProductsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    \Filament\Tables\Actions\BulkAction::make('printTags')
+                    \Filament\Actions\BulkAction::make('printTags')
                         ->label('Cetak Label Harga')
                         ->icon('heroicon-o-printer')
                         ->color('success')
