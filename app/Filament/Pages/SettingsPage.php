@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Schema;
@@ -43,23 +42,19 @@ class SettingsPage extends Page implements HasForms
     {
         return $schema
             ->components([
-                Section::make('Informasi Toko (Ditampilkan di Struk PDF)')
-                    ->description('Detail ini akan langsung muncul pada aplikasi POS dan cetak struk pdf.')
-                    ->components([
-                        TextInput::make('shop_name')
-                            ->label('Nama Toko')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('shop_phone')
-                            ->label('Nomor Telepon')
-                            ->tel()
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('shop_address')
-                            ->label('Alamat Toko')
-                            ->required()
-                            ->maxLength(500),
-                    ])
+                TextInput::make('shop_name')
+                    ->label('Nama Toko')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('shop_phone')
+                    ->label('Nomor Telepon')
+                    ->tel()
+                    ->required()
+                    ->maxLength(255),
+                Textarea::make('shop_address')
+                    ->label('Alamat Toko')
+                    ->required()
+                    ->maxLength(500),
             ])
             ->statePath('data');
     }
