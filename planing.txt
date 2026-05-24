@@ -173,3 +173,10 @@ PHASE 11: Fitur Cetak Label Harga & Barcode (Price Tags) ✅ SELESAI
   [✅] Menambahkan Bulk Action di halaman Products (Cetak Label Harga).
   [✅] Menyiapkan Halaman HTML cetak grid A4 responsif.
   [✅] Integrasi JSBarcode untuk rendering barcode di setiap label.
+
+PHASE 12: Fitur Diskon Produk & Harga Coret (Price Tag & Kasir) ✅ SELESAI
+  [✅] Menambahkan kolom discount_price pada tabel products dan product_variants.
+  [✅] Mengupdate form produk di Filament untuk input Harga Diskon.
+  [✅] Kasir (POS) otomatis menggunakan harga diskon jika tersedia.
+  [✅] Halaman kasir menampilkan harga lama dengan efek coret (strikethrough).
+  [✅] Label cetak (Price Tag A4) menampilkan harga coret bila ada diskon.

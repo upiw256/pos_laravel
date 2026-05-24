@@ -136,7 +136,12 @@
                                 @endif
                             </td>
                             <td class="px-3 py-1.5 text-right whitespace-nowrap">
-                                <span class="text-xs font-black text-gray-900 dark:text-white">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</span>
+                                @if($product->discount_price && $product->discount_price > 0)
+                                    <span class="text-[10px] text-gray-400 line-through block">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</span>
+                                    <span class="text-xs font-black text-red-500">Rp {{ number_format($product->discount_price, 0, ',', '.') }}</span>
+                                @else
+                                    <span class="text-xs font-black text-gray-900 dark:text-white">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</span>
+                                @endif
                             </td>
                             <td class="px-2 py-1.5 text-center">
                                 <div class="w-6 h-6 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity mx-auto">
@@ -198,7 +203,12 @@
                                 @endif
                             </td>
                             <td class="px-3 py-1.5 text-right whitespace-nowrap">
-                                <span class="text-xs font-black text-gray-900 dark:text-white">Rp {{ number_format($variant->sell_price, 0, ',', '.') }}</span>
+                                @if($variant->discount_price && $variant->discount_price > 0)
+                                    <span class="text-[10px] text-gray-400 line-through block">Rp {{ number_format($variant->sell_price, 0, ',', '.') }}</span>
+                                    <span class="text-xs font-black text-red-500">Rp {{ number_format($variant->discount_price, 0, ',', '.') }}</span>
+                                @else
+                                    <span class="text-xs font-black text-gray-900 dark:text-white">Rp {{ number_format($variant->sell_price, 0, ',', '.') }}</span>
+                                @endif
                             </td>
                             <td class="px-2 py-1.5 text-center">
                                 <div class="w-6 h-6 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity mx-auto">

@@ -8,13 +8,24 @@ class ProductVariant extends Model
 {
     protected $fillable = [
         'product_id', 'name', 'sku', 'barcode',
-        'cost_price', 'sell_price',
+        'cost_price', 'sell_price', 'discount_price',
     ];
 
     protected $casts = [
-        'cost_price' => 'decimal:2',
-        'sell_price' => 'decimal:2',
+        'cost_price'     => 'decimal:2',
+        'sell_price'     => 'decimal:2',
+        'discount_price' => 'decimal:2',
     ];
+
+    /**
+     * Returns the effective selling price (discount if available, else normal).
+     */
+    public function getEffectivePriceAttribute(): float
+    {
+        return (float) ($this->discount_price && $this->discount_price > 0
+            ? $this->discount_price
+            : $this->sell_price);
+    }
 
     public function product()
     {

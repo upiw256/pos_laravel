@@ -177,26 +177,29 @@ class PosPage extends Page
         if (isset($this->cart[$key])) {
             $this->cart[$key]['quantity']++;
         } else {
-            $price = (float) $product->sell_price;
-            $cost  = (float) $product->cost_price;
-            $name  = $product->name;
+            $price         = (float) $product->effective_price;
+            $original_price = (float) $product->sell_price;
+            $cost          = (float) $product->cost_price;
+            $name          = $product->name;
 
             if ($variantId) {
                 $variant = $product->variants()->find($variantId);
                 if ($variant) {
-                    $price = (float) $variant->sell_price;
-                    $cost  = (float) $variant->cost_price;
-                    $name .= ' (' . $variant->name . ')';
+                    $price          = (float) $variant->effective_price;
+                    $original_price = (float) $variant->sell_price;
+                    $cost           = (float) $variant->cost_price;
+                    $name          .= ' (' . $variant->name . ')';
                 }
             }
 
             $this->cart[$key] = [
-                'product_id' => $productId,
-                'variant_id' => $variantId,
-                'name'       => $name,
-                'price'      => $price,
-                'cost'       => $cost,
-                'quantity'   => 1,
+                'product_id'     => $productId,
+                'variant_id'     => $variantId,
+                'name'           => $name,
+                'price'          => $price,
+                'original_price' => $original_price,
+                'cost'           => $cost,
+                'quantity'       => 1,
             ];
         }
 

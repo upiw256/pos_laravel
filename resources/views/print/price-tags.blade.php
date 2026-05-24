@@ -106,7 +106,12 @@
             <div class="tag-box">
                 <div class="store-name">{{ \App\Models\Setting::get('store_name', 'POS Store') }}</div>
                 <div class="product-name">{{ $product->name }}</div>
-                <div class="price">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</div>
+                @if($product->discount_price && $product->discount_price > 0)
+                    <div class="price" style="color: #e11d48;">Rp {{ number_format($product->discount_price, 0, ',', '.') }}</div>
+                    <div style="font-size:12px; color:#94a3b8; text-decoration:line-through; margin-top:-6px; margin-bottom:8px;">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</div>
+                @else
+                    <div class="price">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</div>
+                @endif
                 
                 <svg class="barcode-svg"
                      data-format="CODE128"

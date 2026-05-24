@@ -93,7 +93,7 @@ class ProductForm
                                     ->live(),
                                 
                                 // Harga untuk Produk Tanpa Varian
-                                Grid::make(2)
+                                Grid::make(3)
                                     ->schema([
                                         TextInput::make('cost_price')
                                             ->label('Harga Pokok (HPP)')
@@ -101,10 +101,15 @@ class ProductForm
                                             ->prefix('Rp')
                                             ->required(fn ($get) => !$get('is_variant')),
                                         TextInput::make('sell_price')
-                                            ->label('Harga Jual')
+                                            ->label('Harga Jual Normal')
                                             ->numeric()
                                             ->prefix('Rp')
                                             ->required(fn ($get) => !$get('is_variant')),
+                                        TextInput::make('discount_price')
+                                            ->label('Harga Diskon (kosongkan jika tidak ada)')
+                                            ->numeric()
+                                            ->prefix('Rp')
+                                            ->placeholder('Opsional'),
                                     ])
                                     ->visible(fn ($get) => !$get('is_variant')),
 
@@ -112,7 +117,7 @@ class ProductForm
                                 \Filament\Forms\Components\Repeater::make('variants')
                                     ->relationship()
                                     ->schema([
-                                        Grid::make(4)
+                                        Grid::make(5)
                                             ->schema([
                                                 TextInput::make('name')
                                                     ->label('Nama Varian (Contoh: Merah, XL)')
@@ -128,13 +133,19 @@ class ProductForm
                                                     ->required()
                                                     ->columnSpan(1),
                                                 TextInput::make('sell_price')
-                                                    ->label('Harga Jual Varian')
+                                                    ->label('Harga Jual Normal')
                                                     ->numeric()
                                                     ->prefix('Rp')
                                                     ->required()
                                                     ->columnSpan(1),
+                                                TextInput::make('discount_price')
+                                                    ->label('Harga Diskon')
+                                                    ->numeric()
+                                                    ->prefix('Rp')
+                                                    ->placeholder('Opsional')
+                                                    ->columnSpan(1),
                                                 TextInput::make('barcode')
-                                                    ->columnSpan(4),
+                                                    ->columnSpan(5),
                                             ])
                                     ])
                                     ->visible(fn ($get) => $get('is_variant'))
