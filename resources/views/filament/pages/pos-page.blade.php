@@ -311,7 +311,7 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" wire:click="closeReceipt"></div>
         
         <!-- Modal Content -->
-        <div class="relative bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl p-6 m-4 animate-item z-10 border border-white/10 dark:border-gray-800">
+        <div class="relative bg-white dark:bg-gray-900 rounded-3xl w-[90%] shadow-2xl p-6 m-4 animate-item z-10 border border-white/10 dark:border-gray-800 mx-auto" style="max-width: 450px !important;">
             
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3">

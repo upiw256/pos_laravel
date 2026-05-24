@@ -14,8 +14,15 @@
     </style>
 </head>
 <body>
-    <div class="text-center font-bold" style="font-size: 14px; margin-bottom: 3px;">M-POS ENTERPRISE</div>
-    <div class="text-center" style="margin-bottom: 5px;">Jl. Contoh POS No. 123, Kota</div>
+    @php
+        $shopName = App\Models\Setting::get('shop_name', 'M-POS ENTERPRISE');
+        $shopAddress = App\Models\Setting::get('shop_address', 'Jl. Contoh POS No. 123, Kota');
+        $shopPhone = App\Models\Setting::get('shop_phone', '08123456789');
+    @endphp
+
+    <div class="text-center font-bold" style="font-size: 14px; margin-bottom: 3px;">{{ strtoupper($shopName) }}</div>
+    <div class="text-center" style="margin-bottom: 2px;">{{ $shopAddress }}</div>
+    <div class="text-center" style="margin-bottom: 5px;">Telp: {{ $shopPhone }}</div>
     <div class="divider"></div>
     
     <div>No : {{ $sale->reference_no }}</div>

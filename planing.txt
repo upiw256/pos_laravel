@@ -156,3 +156,9 @@ PHASE 8: Penyempurnaan Fitur Transaksi Kasir ✅ SELESAI
   [✅] Menonaktifkan (disable) pilihan barang saat proses pembayaran berlangsung.
   [✅] Menampilkan struk transaksi dalam bentuk PDF setelah transaksi selesai.
   [✅] Menambahkan tombol print agar kasir dapat langsung mencetak struk PDF.
+
+PHASE 9: Pengaturan Toko & Perbaikan UI Kasir ✅ SELESAI
+  [✅] Memperbaiki lebar modal "Transaksi Berhasil" yang terlalu merentang tak proporsional.
+  [✅] Membuat database dan model Settings untuk parameter dinamis toko.
+  [✅] Membuat Halaman Filament Settings (Nama, Alamat, No. Telp).
+  [✅] Integrasi variabel Settings ke dalam Struk PDF.
